@@ -1,0 +1,26 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+!terraform.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+*.tfplan
+plan.tfplan
+
+# Kubeconfig / credentials if ever generated locally
+kubeconfig*
+.aws/
+
+# OS / editor cruft
+.DS_Store
+*.swp
+.vscode/
+.idea/
