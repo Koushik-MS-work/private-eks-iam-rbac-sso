@@ -1,0 +1,20 @@
+# Copy this to terraform.tfvars and fill in real values before applying.
+
+aws_region      = "ap-south-1"
+cluster_name    = "private-eks-demo"
+cluster_version = "1.30"
+
+# Set true only if you want a locked-down public endpoint for easier demoing.
+# Leave false to satisfy "private cluster" in the strictest sense.
+cluster_endpoint_public_access       = false
+cluster_endpoint_public_access_cidrs = []
+
+# --- Second user / SSO ---
+# Leave blank on the very first `apply`. After Identity Center provisions the
+# permission-set role, either re-apply (data.aws_iam_roles will find it automatically)
+# or paste the exact role ARN here.
+second_user_identity_store_username = "priya.sharma"
+second_user_namespace               = "dev"
+second_user_iam_arn                 = ""
+
+readonly_viewer_iam_arn = ""
