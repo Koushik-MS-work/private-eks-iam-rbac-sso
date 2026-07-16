@@ -1,0 +1,45 @@
+# Namespace-scoped Role: full app-management access, but ONLY inside `dev`.
+# No access to other namespaces, no cluster-scoped resources (nodes, PVs, CRDs, etc.).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: dev-namespace-user
+  namespace: dev
+rules:
+  - apiGroups: ["", "apps", "batch", "autoscaling"]
+    resources:
+      - pods
+      - pods/log
+      - pods/exec
+      - services
+      - configmaps
+      - deployments
+      - replicasets
+      - statefulsets
+      - daemonsets
+      - jobs
+      - cronjobs
+      - horizontalpodautoscalers
+      - events
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"] # deliberately no create/update/delete on secrets
+---
+# Binds the `dev-namespace-users` Kubernetes group (mapped from IAM via the EKS access
+# entry in terraform/access-entries.tf) to the Role above. Anyone whose IAM principal
+# is placed in this group -- e.g. the second user via SSO -- gets exactly this access,
+# and nothing outside the `dev` namespace.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dev-namespace-user-binding
+  namespace: dev
+subjects:
+  - kind: Group
+    name: dev-namespace-users
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: dev-namespace-user
+  apiGroup: rbac.authorization.k8s.io

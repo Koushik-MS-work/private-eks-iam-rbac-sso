@@ -1,0 +1,34 @@
+# Read-only Role, scoped to `staging` only.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: staging-namespace-viewer
+  namespace: staging
+rules:
+  - apiGroups: ["", "apps", "batch"]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - configmaps
+      - deployments
+      - replicasets
+      - statefulsets
+      - jobs
+      - cronjobs
+      - events
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: staging-namespace-viewer-binding
+  namespace: staging
+subjects:
+  - kind: Group
+    name: staging-namespace-viewers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: staging-namespace-viewer
+  apiGroup: rbac.authorization.k8s.io

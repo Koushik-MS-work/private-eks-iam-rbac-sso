@@ -1,0 +1,36 @@
+# `prod` is deliberately the most restrictive: no shell exec, no delete on core workloads,
+# read-only on secrets, and no direct kubectl access is expected in the demo -- prod changes
+# should go through CI/CD, not an interactive kubeconfig. Included here to show the
+# per-namespace RBAC pattern extends cleanly to a third, stricter tier.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: prod-namespace-viewer
+  namespace: prod
+rules:
+  - apiGroups: ["", "apps", "batch"]
+    resources:
+      - pods
+      - services
+      - configmaps
+      - deployments
+      - replicasets
+      - statefulsets
+      - jobs
+      - cronjobs
+      - events
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prod-namespace-viewer-binding
+  namespace: prod
+subjects:
+  - kind: Group
+    name: prod-namespace-viewers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: prod-namespace-viewer
+  apiGroup: rbac.authorization.k8s.io
