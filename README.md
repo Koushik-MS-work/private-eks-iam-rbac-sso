@@ -66,7 +66,6 @@ deliberately kept separate — an EKS Access Entry maps an IAM principal to a Ku
 ├── docs/
 │   └── Architecture-Options.docx   # Alternatives considered, pros/cons, decisions
 ├── README.md
-└── SETUP.md               # Step-by-step: linking this repo to an AWS account
 ```
 
 ## Quick start
