@@ -14,7 +14,7 @@
 data "aws_ssoadmin_instances" "this" {}
 
 locals {
-  sso_instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
+  sso_instance_arn  = tolist(data.aws_ssoadmin_instances.this.arns)[0]
   identity_store_id = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)[0]
 }
 
@@ -30,12 +30,13 @@ resource "aws_ssoadmin_permission_set" "eks_developer" {
 # the user in the door and identifies them to the cluster.
 data "aws_iam_policy_document" "eks_developer" {
   statement {
-    sid       = "EKSDescribeAndAuth"
-    effect    = "Allow"
-    actions   = [
+    sid    = "EKSDescribeAndAuth"
+    effect = "Allow"
+    actions = [
       "eks:DescribeCluster",
       "eks:ListClusters",
       "eks:AccessKubernetesApi",
+      "ssm:StartSession",
     ]
     resources = [module.eks.cluster_arn]
   }
