@@ -37,6 +37,17 @@ resource "aws_security_group" "bastion" {
   }
 }
 
+resource "aws_security_group_rule" "cluster_from_bastion" {
+  count                    = var.create_bastion ? 1 : 0
+  description              = "Allow bastion to reach the private EKS API endpoint"
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = module.eks.cluster_security_group_id
+  source_security_group_id = aws_security_group.bastion[0].id
+}
+
 resource "aws_iam_role" "bastion" {
   count = var.create_bastion ? 1 : 0
   name  = "${var.cluster_name}-bastion-role"
@@ -56,6 +67,33 @@ resource "aws_iam_role_policy_attachment" "bastion_ssm" {
   count      = var.create_bastion ? 1 : 0
   role       = aws_iam_role.bastion[0].name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+# Lets the bastion role call the AWS-side EKS APIs needed to generate a kubeconfig
+# (`aws eks update-kubeconfig` calls eks:DescribeCluster). This is plain IAM and is
+# entirely separate from the EKS access entry below -- the access entry controls
+# what the role can do *inside* the cluster once authenticated; this controls whether
+# it can even discover/describe the cluster via the AWS API in the first place.
+data "aws_iam_policy_document" "bastion_eks_describe" {
+  count = var.create_bastion ? 1 : 0
+
+  statement {
+    sid    = "EKSDescribeAndAuth"
+    effect = "Allow"
+    actions = [
+      "eks:DescribeCluster",
+      "eks:ListClusters",
+      "eks:AccessKubernetesApi",
+    ]
+    resources = [module.eks.cluster_arn]
+  }
+}
+
+resource "aws_iam_role_policy" "bastion_eks_describe" {
+  count  = var.create_bastion ? 1 : 0
+  name   = "${var.cluster_name}-bastion-eks-describe"
+  role   = aws_iam_role.bastion[0].id
+  policy = data.aws_iam_policy_document.bastion_eks_describe[0].json
 }
 
 # Lets whoever is logged into the bastion run kubectl as a cluster admin
