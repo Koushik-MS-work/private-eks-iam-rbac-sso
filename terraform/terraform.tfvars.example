@@ -2,7 +2,7 @@
 
 aws_region      = "ap-south-1"
 cluster_name    = "private-eks-demo"
-cluster_version = "1.30"
+cluster_version = "1.34"
 
 # Set true only if you want a locked-down public endpoint for easier demoing.
 # Leave false to satisfy "private cluster" in the strictest sense.

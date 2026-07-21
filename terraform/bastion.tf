@@ -97,7 +97,7 @@ resource "aws_instance" "bastion" {
   # the moment you connect via Session Manager.
   user_data = <<-EOF
     #!/bin/bash
-    curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.0/2024-05-12/bin/linux/amd64/kubectl
+    curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.34.6/2026-04-08/bin/linux/amd64/kubectl
     chmod +x kubectl
     mv kubectl /usr/local/bin/
   EOF

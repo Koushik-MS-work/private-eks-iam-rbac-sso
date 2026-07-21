@@ -19,7 +19,7 @@ variable "cluster_name" {
 variable "cluster_version" {
   description = "Kubernetes version for the EKS control plane"
   type        = string
-  default     = "1.30"
+  default     = "1.34"
 }
 
 variable "vpc_cidr" {
@@ -101,8 +101,8 @@ variable "second_user_iam_arn" {
     For AWS SSO this is normally the auto-created role, e.g.:
     arn:aws:iam::<account_id>:role/aws-reserved/sso.amazonaws.com/ap-south-1/AWSReservedSSO_EKSDeveloper_xxxxxxxxxxxxxxxx
   EOT
-  type    = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "second_user_identity_store_username" {
