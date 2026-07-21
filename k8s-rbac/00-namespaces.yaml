@@ -1,0 +1,25 @@
+# Applied first, before the Role/RoleBinding files in this folder, since those
+# reference these namespaces. `kubectl apply -f k8s-rbac/` applies all files in the
+# folder together and Kubernetes will create namespaces before anything that
+# references them regardless of file order, but this file is named to sort first
+# for readability.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  labels:
+    managed-by: kubectl
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: staging
+  labels:
+    managed-by: kubectl
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod
+  labels:
+    managed-by: kubectl
